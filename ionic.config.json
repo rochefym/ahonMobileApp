@@ -1,0 +1,7 @@
+{
+  "name": "ahonApp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
