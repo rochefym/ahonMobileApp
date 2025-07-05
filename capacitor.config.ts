@@ -8,10 +8,12 @@ const config: CapacitorConfig = {
     androidScheme: 'https',
     allowNavigation: [
       'https://*',
+      'http://*',
       'http://172.29.3.6:8000',
-      'http://192.168.1.3:8000/*',
-      'http://192.168.1.3:8000',
-      'http://192.168.1.3:8000/api/stream',
+      'http://172.29.9.192',
+      'http://172.29.9.192:8000',
+      'http://172.29.9.192:8000/*',
+      'http://172.29.9.192:8000/api/stream',
     ],
     // Allow cleartext (HTTP) traffic
     cleartext: true
