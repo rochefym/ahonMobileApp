@@ -13,4 +13,12 @@ export class SettingsPage implements OnInit {
   ngOnInit() {
   }
 
+  selectedMode: string = 'visible';
+
+  selectMode(mode: string) {
+    this.selectedMode = mode;
+    // Emit event or call service to handle mode change
+    console.log('Selected mode:', mode);
+  }
+
 }

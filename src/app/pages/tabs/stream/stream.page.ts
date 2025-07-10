@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { InAppBrowser, InAppBrowserOptions } from '@awesome-cordova-plugins/in-app-browser/ngx';
-
 @Component({
   selector: 'app-stream',
   templateUrl: './stream.page.html',
@@ -170,6 +169,18 @@ export class StreamPage {
                   console.log('Yolo button clicked');
                   window.location.href = 'http://172.29.9.192:8000/api/yolo-stream';
                 });
+
+
+                // Create Capture Detection button
+                var captureBtn = document.createElement('button');
+                captureBtn.innerHTML = 'Capture';
+                captureBtn.className = 'custom-button';
+                captureBtn.style.backgroundColor = '#28a745';
+                captureBtn.addEventListener('click', function(e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  window.location.href = 'http://172.29.9.192:8000/api/yolo-stream';
+                });
                 
                 // Add buttons to container
                 buttonContainer.appendChild(streamBtn);
@@ -194,16 +205,16 @@ export class StreamPage {
             }
             
             // Also try after a small delay as fallback
-            setTimeout(function() {
-              console.log('Attempting delayed button creation...');
-              createButtons();
-            }, 1000);
+            // setTimeout(function() {
+            //   console.log('Attempting delayed button creation...');
+            //   createButtons();
+            // }, 1000);
             
             // And another attempt after longer delay
-            setTimeout(function() {
-              console.log('Attempting final button creation...');
-              createButtons();
-            }, 3000);
+            // setTimeout(function() {
+            //   console.log('Attempting final button creation...');
+            //   createButtons();
+            // }, 3000);
             
           })();
         `

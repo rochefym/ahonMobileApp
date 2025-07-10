@@ -1,0 +1,29 @@
+  <div class="start-mission-container">
+    <!-- START MISSION -->
+    <ion-button fill="solid" (click)="startTimer()" [disabled]="isRunning"
+      class="start-mission-button"
+    >
+      <ion-icon name="play" class="pe-2 py-1"></ion-icon>
+      <ion-text> Start Mission</ion-text>
+    </ion-button>
+
+ </div>
+
+<div>
+    <!-- END MISSION -->
+    <h1>{{ formattedTime }}</h1>
+
+    <ion-button fill="solid" (click)="stopTimer()" [disabled]="!isRunning"
+      class="end-mission-button"
+    >
+      <ion-icon name="square" class="pe-2 py-1"></ion-icon>
+      <ion-text> End Mission </ion-text>
+    </ion-button>
+
+
+    <div class="person-detection-count">
+      <ion-icon name="people-outline" class="pe-2"></ion-icon>
+      <span>0</span>
+    </div>
+
+  </div>
