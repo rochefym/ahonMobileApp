@@ -7,6 +7,8 @@ import { InAppBrowser, InAppBrowserOptions } from '@awesome-cordova-plugins/in-a
   styleUrls: ['./stream.page.scss'],
   standalone: false
 })
+
+
 export class StreamPage {
   baseUrl: string = 'http://172.29.9.192:8000';
   url: string = 'http://172.29.9.192:8000/api/stream';

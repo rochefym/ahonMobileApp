@@ -7,13 +7,18 @@ import { IonicModule } from '@ionic/angular';
 import { VictimsPageRoutingModule } from './victims-routing.module';
 
 import { VictimsPage } from './victims.page';
+import { VictimInfoComponent } from 'src/app/components/victim-info/victim-info.component';
+import { HeaderComponent } from 'src/app/components/header/header.component';
+
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    VictimsPageRoutingModule
+    VictimsPageRoutingModule,
+    VictimInfoComponent,
+    HeaderComponent
   ],
   declarations: [VictimsPage]
 })

@@ -1,13 +1,25 @@
-<ion-header [translucent]="true">
+<app-header></app-header>
+
+
+<!-- <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>victims</ion-title>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+  <div class="victim-counts">
+    <div class="victim-header">
+      <ion-icon name="people-outline"></ion-icon>
+      <span>Detected Victims</span>
+    </div>
+    <p class="victim-status">3 people detected</p>
+  </div>
+
+  <app-victim-info></app-victim-info>
+  <!-- <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">victims</ion-title>
     </ion-toolbar>
-  </ion-header>
+  </ion-header> -->
 </ion-content>

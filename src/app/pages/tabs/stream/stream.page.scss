@@ -1,0 +1,100 @@
+ion-content {
+  --background: #111827;
+
+  .container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 90%;
+
+    .initial-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: 32px;
+      padding: 16px 25px;
+      text-align: center;
+      width: 80%;
+    }
+    
+    .search-icon {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 16px;
+    }
+    
+    .scanner-title {
+      font-weight: 500;
+      color: white;
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    
+    .scanner-subtitle {
+      font-weight: 300;
+      color: white;
+      font-size: 18px;
+    }  
+}
+
+.custom-header {
+    background-color: #1F2937;
+    height: 15vh;
+    --ion-background-color: #1F2937;
+  
+    // ion-toolbar {
+    //   background-color: transparent;
+    //   height: 100%;
+    //   display: flex;
+    //   align-items: center;
+    //   justify-content: center;
+    //   padding: 0 16px;
+    // }
+  
+    // .header-content {
+    //   width: 100%;
+    //   display: flex;
+    //   align-items: center;
+    //   justify-content: center; /* Horizontally center the content */
+    //   gap: 5%;
+    //   border: 1px solid white;
+  
+    //   .start-mission-button {
+    //     --background: #16A34A;
+    //     --color: white;
+    //     font-weight: normal;
+    //     border-radius: 8px;
+    //     width: 60%;
+  
+    //     ion-icon {
+    //       font-size: 20px;
+    //       width: 20px;
+    //       height: 20px;
+    //     }
+    //   }
+  
+    //   .people-count {
+    //     display: flex;
+    //     align-items: center;
+    //     padding: 6px 12px;
+    //     background-color: #374151;
+    //     border-radius: 8px;
+    //     width: 20%;
+    //     height: 100%;
+  
+    //     ion-icon {
+    //       font-size: 20px;
+    //       width: 20px;
+    //       height: 20px;
+    //     }
+  
+    //     span {
+    //       font-size: 18px;
+    //       margin-left: 8px;
+    //     }
+    //   }
+    // }
+  }
+}

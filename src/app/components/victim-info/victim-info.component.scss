@@ -1,0 +1,42 @@
+.info-container{
+  width: 100%;
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  margin: 10px 0;
+
+  .victim-info {
+    border: 1px solid white;
+    border-radius: 7px;
+    height: 213px;
+    width: 388px;
+    padding: 14px 20px;
+
+    .victim-id {
+      display: flex;
+      justify-content: space-between; 
+      align-items: center;
+      width: 100%;
+      max-width: 388px; 
+  
+      .victim-label {
+        color: white;
+        font-size: 16px;
+        font-weight: 500;
+      }
+  
+      .status-badge {
+        text-align: center;
+        height: 32px;
+        width: 85px;
+        background-color: #303D50;
+        color: #E0B617;
+        padding: 4px 12px;
+        border-radius: 25px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+    }
+  }
+  
+}
