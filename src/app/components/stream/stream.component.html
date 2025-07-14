@@ -1,3 +1,54 @@
-<p>
-  stream works!
-</p>
+<div class="stream-container">
+  <!-- View Angle Selector -->
+  <div class="stream-header">
+    <ion-item class="view-selector">
+      <ion-label>View Angle</ion-label>
+      <ion-select [(ngModel)]="selectedView" (ionChange)="onViewChange($event)" interface="popover">
+        <ion-select-option value="front">
+          <ion-icon name="eye-outline"></ion-icon>
+          Front/Side View
+        </ion-select-option>
+        <ion-select-option value="angled">
+          <ion-icon name="trending-up-outline"></ion-icon>
+          Angled View
+        </ion-select-option>
+        <ion-select-option value="top">
+          <ion-icon name="arrow-down-outline"></ion-icon>
+          Top View
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+
+  <!-- Main Stream Display -->
+  <div class="stream-display" [attr.data-view]="selectedView">
+    <!-- Detection Overlay -->
+    <div class="detection-overlay" *ngIf="detectionEnabled">
+      <div 
+        class="detection-box" 
+        *ngFor="let detection of mockDetections"
+        [style.left.px]="detection.x"
+        [style.top.px]="detection.y"
+        [style.width.px]="detection.width"
+        [style.height.px]="detection.height">
+        <div class="detection-label">
+          <span class="pose">{{ detection.pose }}</span>
+          <span class="confidence">{{ (detection.confidence * 100).toFixed(0) }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thermal Camera Feed Placeholder -->
+    <div class="thermal-feed">
+      <div class="thermal-gradient"></div>
+      <div class="crosshair">
+        <div class="crosshair-h"></div>
+        <div class="crosshair-v"></div>
+      </div>
+      <div class="thermal-info">
+        <div class="temp-reading">{{ selectedView }} View Active</div>
+        <div class="detection-count">{{ mockDetections.length }} targets detected</div>
+      </div>
+    </div>
+  </div>
+</div>

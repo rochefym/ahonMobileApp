@@ -16,11 +16,8 @@ import { MissionTimerComponent } from "src/app/components/mission-timer/mission-
     FormsModule,
     IonicModule,
     StreamPageRoutingModule,
-<<<<<<< Updated upstream
+    MissionTimerComponent,
     HeaderComponent
-=======
-    MissionTimerComponent
->>>>>>> Stashed changes
   ],
   declarations: [StreamPage]
 

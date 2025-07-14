@@ -1,0 +1,35 @@
+<div class="input-selector-container">
+  <ion-segment [(ngModel)]="selectedInput" (ionChange)="onInputChange($event)">
+    <ion-segment-button value="image">
+      <ion-icon name="image-outline"></ion-icon>
+      <ion-label>Image</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="video">
+      <ion-icon name="videocam-outline"></ion-icon>
+      <ion-label>Video</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="stream">
+      <ion-icon name="radio-outline"></ion-icon>
+      <ion-label>Live Stream</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- Upload Controls -->
+  <div class="upload-controls" *ngIf="selectedInput !== 'stream'">
+    <input 
+      type="file" 
+      [accept]="selectedInput === 'image' ? 'image/*' : 'video/*'"
+      (change)="onFileUpload($event, selectedInput)"
+      style="display: none"
+      #fileInput>
+    
+    <ion-button 
+      expand="block" 
+      fill="outline" 
+      (click)="fileInput.click()"
+      class="upload-btn">
+      <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+      Upload {{ selectedInput === 'image' ? 'Image' : 'Video' }}
+    </ion-button>
+  </div>
+</div>

@@ -17,9 +17,9 @@
   margin-bottom: 3rem;
 
   .auth-logo {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
+    width: 200px; // Reduced from 80px
+    height: 100px; // Reduced from 80px
+    border-radius: 20%;
     margin-bottom: 1rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   }

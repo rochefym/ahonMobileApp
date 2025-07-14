@@ -1,22 +1,280 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { InAppBrowser, InAppBrowserOptions } from '@awesome-cordova-plugins/in-app-browser/ngx';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DetectionService } from '../../../services/detection.service';
+import { SettingsService } from '../../../services/settings.service';
+import { Subscription } from 'rxjs';
+
 @Component({
   selector: 'app-stream',
   templateUrl: './stream.page.html',
   styleUrls: ['./stream.page.scss'],
   standalone: false
 })
+export class StreamPage implements OnInit, OnDestroy {
+  @ViewChild('videoFileInput') videoFileInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('imageFileInput') imageFileInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('videoPlayer') videoPlayer!: ElementRef<HTMLVideoElement>;
+  @ViewChild('videoCanvas') videoCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('imageElement') imageElement!: ElementRef<HTMLImageElement>;
+  @ViewChild('imageCanvas') imageCanvas!: ElementRef<HTMLCanvasElement>;
 
+  currentInputType: 'image' | 'video' | 'stream' = 'stream';
+  isDetectionActive = false;
+  isStreamActive = false;
+  streamType: 'regular' | 'yolo' = 'regular';
+  
+  selectedVideoFile: string | null = null;
+  selectedImageFile: string | null = null;
+  detectionResults: any[] = [];
+  detectionCount = 0;
+  lastDetectionTime: Date | null = null;
+  
+  private detectionSubscription: Subscription;
+  private detectionInterval: any;
 
-export class StreamPage {
   baseUrl: string = 'http://172.29.9.192:8000';
   url: string = 'http://172.29.9.192:8000/api/stream';
   url2: string = 'http://172.29.9.192:8000/api/yolo-stream';
 
-  count: number = 0;
+  constructor(
+    private iab: InAppBrowser,
+    private sanitizer: DomSanitizer,
+    private detectionService: DetectionService,
+    private settingsService: SettingsService
+  ) {
+    this.detectionSubscription = this.detectionService.detectionCount$.subscribe(
+      count => this.detectionCount = count
+    );
+  }
 
-  constructor(private iab: InAppBrowser) { }
+  ngOnInit() {
+    // Initialize detection service
+  }
 
+  ngOnDestroy() {
+    if (this.detectionSubscription) {
+      this.detectionSubscription.unsubscribe();
+    }
+    if (this.detectionInterval) {
+      clearInterval(this.detectionInterval);
+    }
+  }
+
+  onInputTypeChange(event: any) {
+    this.currentInputType = event.detail.value;
+    this.stopDetection(); // Stop any active detection when switching
+    console.log('Input type changed to:', this.currentInputType);
+  }
+
+  // Video handling
+  triggerVideoFileInput() {
+    this.videoFileInput.nativeElement.click();
+  }
+
+  onVideoFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedVideoFile = URL.createObjectURL(file);
+    }
+  }
+
+  onVideoLoaded() {
+    console.log('Video loaded successfully');
+  }
+
+  onVideoTimeUpdate() {
+    if (this.isDetectionActive && this.videoPlayer) {
+      this.performVideoDetection();
+    }
+  }
+
+  // Image handling
+  triggerImageFileInput() {
+    this.imageFileInput.nativeElement.click();
+  }
+
+  onImageFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedImageFile = URL.createObjectURL(file);
+    }
+  }
+
+  onImageLoaded() {
+    console.log('Image loaded successfully');
+    if (this.isDetectionActive) {
+      this.performImageDetection();
+    }
+  }
+
+  // Stream handling
+  toggleStream() {
+    this.isStreamActive = !this.isStreamActive;
+    if (this.isStreamActive) {
+      console.log('Stream started');
+    } else {
+      console.log('Stream stopped');
+      this.stopDetection();
+    }
+  }
+
+  toggleStreamType() {
+    this.streamType = this.streamType === 'regular' ? 'yolo' : 'regular';
+    console.log('Stream type switched to:', this.streamType);
+  }
+
+  getCurrentStreamUrl(): SafeResourceUrl {
+    // Use the detection service to get the correct endpoint based on selected model
+    const streamUrl = this.detectionService.getStreamEndpoint();
+    return this.sanitizer.bypassSecurityTrustResourceUrl(streamUrl);
+  }
+
+  // Detection methods
+  startDetection() {
+    this.isDetectionActive = true;
+    this.lastDetectionTime = new Date();
+    
+    switch (this.currentInputType) {
+      case 'video':
+        this.startVideoDetection();
+        break;
+      case 'image':
+        this.performImageDetection();
+        break;
+      case 'stream':
+        this.startStreamDetection();
+        break;
+    }
+    
+    console.log('Detection started for:', this.currentInputType);
+  }
+
+  stopDetection() {
+    this.isDetectionActive = false;
+    if (this.detectionInterval) {
+      clearInterval(this.detectionInterval);
+    }
+    console.log('Detection stopped');
+  }
+
+  resetDetection() {
+    this.detectionCount = 0;
+    this.detectionResults = [];
+    this.lastDetectionTime = null;
+    this.detectionService.updateDetectionCount(0);
+    console.log('Detection reset');
+  }
+
+  private startVideoDetection() {
+    // Simulate video detection - replace with actual ML detection
+    this.detectionInterval = setInterval(() => {
+      this.performVideoDetection();
+    }, 1000);
+  }
+
+  private performVideoDetection() {
+    // Simulate detection results - replace with actual ML detection
+    const mockDetectionCount = Math.floor(Math.random() * 5);
+    this.updateDetectionCount(mockDetectionCount);
+    this.drawVideoDetections();
+  }
+
+  private async performImageDetection() {
+    try {
+      if (!this.selectedImageFile) return;
+      
+      // Convert image to FormData for API call
+      const formData = new FormData();
+      // In real implementation, you'd convert the image file to blob
+      // formData.append('image', imageBlob);
+      
+      // For now, simulate the API call
+      const result = await this.detectionService.detectFromImage(formData);
+      this.updateDetectionCount(result.detectionCount || 0);
+      this.drawImageDetections();
+    } catch (error) {
+      console.error('Image detection failed:', error);
+      // Fallback to mock detection
+      const mockDetectionCount = Math.floor(Math.random() * 3) + 1;
+      this.updateDetectionCount(mockDetectionCount);
+      this.drawImageDetections();
+    }
+  }
+
+  private startStreamDetection() {
+    // Simulate stream detection - replace with actual ML detection
+    this.detectionInterval = setInterval(() => {
+      const mockDetectionCount = Math.floor(Math.random() * 8);
+      this.updateDetectionCount(mockDetectionCount);
+    }, 2000);
+  }
+
+  private updateDetectionCount(count: number) {
+    this.detectionCount = count;
+    this.lastDetectionTime = new Date();
+    this.detectionService.updateDetectionCount(count);
+  }
+
+  private drawVideoDetections() {
+    if (!this.videoCanvas || !this.videoPlayer) return;
+    
+    const canvas = this.videoCanvas.nativeElement;
+    const video = this.videoPlayer.nativeElement;
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw mock bounding boxes
+      for (let i = 0; i < this.detectionCount; i++) {
+        const x = Math.random() * (canvas.width - 100);
+        const y = Math.random() * (canvas.height - 100);
+        
+        ctx.strokeStyle = '#00ff00';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, 80, 100);
+        
+        ctx.fillStyle = '#00ff00';
+        ctx.font = '14px Arial';
+        ctx.fillText(`Person ${i + 1}`, x, y - 5);
+      }
+    }
+  }
+
+  private drawImageDetections() {
+    if (!this.imageCanvas || !this.imageElement) return;
+    
+    const canvas = this.imageCanvas.nativeElement;
+    const img = this.imageElement.nativeElement;
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw mock bounding boxes
+      for (let i = 0; i < this.detectionCount; i++) {
+        const x = Math.random() * (canvas.width - 100);
+        const y = Math.random() * (canvas.height - 100);
+        
+        ctx.strokeStyle = '#ff0000';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(x, y, 80, 100);
+        
+        ctx.fillStyle = '#ff0000';
+        ctx.font = '16px Arial';
+        ctx.fillText(`Person ${i + 1}`, x, y - 5);
+      }
+    }
+  }
+
+  // Legacy methods (keeping for your peer's work)
   openBrowser() {
     if (!this.url) return;
 
@@ -52,7 +310,6 @@ export class StreamPage {
     // Method 1: Try on loadstop with better error handling
     browser.on('loadstop').subscribe(() => {
       console.log('Load stop event fired');
-      this.count = this.count + 1;
       this.injectCustomButtons(browser);
     });
 

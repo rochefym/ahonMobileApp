@@ -1,37 +1,196 @@
-<!-- <ion-header [translucent]="true" class="custom-header">
-  <ion-toolbar>
-    <div class="header-content">
-      <ion-button class="start-mission-button" (click)="openLiveStream()" fill="solid">
-        <ion-icon slot="start" name="play-outline"></ion-icon>
-        Start Mission
-      </ion-button>
-      <div class="people-count">
-        <ion-icon name="people-outline"></ion-icon>
-        <span>0</span>
-      </div>
-    </div>
-  </ion-toolbar>
-</ion-header> -->
-
 <app-header></app-header>
 
 <ion-content [fullscreen]="true">
-  <!-- <ion-button 
-    expand="block" 
-    fill="outline" 
-    (click)="openLiveStream()" 
-    class="ion-margin-top">
-    Open Live Stream  
-  </ion-button>
-
-  <ion-item>
-    Count: {{ count }}
-  </ion-item> -->
-   <div class="container">
-    <div class="initial-state">
-      <img src="assets/icon/search-icon.png" alt="Search Icon" class="search-icon">
-      <h2 class="scanner-title">Thermal Scanner Ready</h2>
-      <p class="scanner-subtitle">Start mission to begin thermal scanning</p>
+  <div class="stream-page-container">
+    
+    <!-- Input Type Selector -->
+    <div class="input-selector">
+      <ion-segment [(ngModel)]="currentInputType" (ionChange)="onInputTypeChange($event)">
+        <ion-segment-button value="video">
+          <ion-label>Video</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="image">
+          <ion-label>Image</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="stream">
+          <ion-label>Stream</ion-label>
+        </ion-segment-button>
+      </ion-segment>
     </div>
+    
+    <!-- Main Display Area -->
+    <div class="main-display">
+      
+      <!-- Video Display -->
+      <div class="video-container" *ngIf="currentInputType === 'video'">
+        <div class="file-input-section">
+          <ion-button 
+            fill="outline" 
+            (click)="triggerVideoFileInput()"
+            class="select-file-btn">
+            <ion-icon name="videocam-outline" slot="start"></ion-icon>
+            Select Video File
+          </ion-button>
+          <input 
+            #videoFileInput 
+            type="file" 
+            accept="video/*" 
+            (change)="onVideoFileSelected($event)"
+            style="display: none;">
+        </div>
+        
+        <div class="video-display" *ngIf="selectedVideoFile">
+          <div class="media-wrapper">
+            <video 
+              #videoPlayer
+              [src]="selectedVideoFile"
+              controls
+              preload="metadata"
+              (loadedmetadata)="onVideoLoaded()"
+              (timeupdate)="onVideoTimeUpdate()">
+            </video>
+            <canvas 
+              #videoCanvas
+              class="detection-overlay"
+              *ngIf="isDetectionActive">
+            </canvas>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Image Display -->
+      <div class="image-container" *ngIf="currentInputType === 'image'">
+        <div class="file-input-section">
+          <ion-button 
+            fill="outline" 
+            (click)="triggerImageFileInput()"
+            class="select-file-btn">
+            <ion-icon name="image-outline" slot="start"></ion-icon>
+            Select Image File
+          </ion-button>
+          <input 
+            #imageFileInput 
+            type="file" 
+            accept="image/*" 
+            (change)="onImageFileSelected($event)"
+            style="display: none;">
+        </div>
+        
+        <div class="image-display" *ngIf="selectedImageFile">
+          <div class="media-wrapper">
+            <img 
+              #imageElement
+              [src]="selectedImageFile"
+              (load)="onImageLoaded()"
+              alt="Selected image">
+            <canvas 
+              #imageCanvas
+              class="detection-overlay"
+              *ngIf="detectionResults.length > 0">
+            </canvas>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Stream Display -->
+      <div class="stream-container" *ngIf="currentInputType === 'stream'">
+        <div class="stream-controls">
+          <ion-button 
+            fill="outline" 
+            (click)="toggleStreamType()"
+            class="stream-toggle-btn">
+            <ion-icon [name]="streamType === 'regular' ? 'eye-outline' : 'videocam-outline'" slot="start"></ion-icon>
+            {{ streamType === 'regular' ? 'Switch to Model POV' : 'Switch to Regular' }}
+          </ion-button>
+        </div>
+        
+        <div class="stream-display" *ngIf="isStreamActive">
+          <div class="media-wrapper">
+            <iframe 
+              [src]="getCurrentStreamUrl()"
+              frameborder="0"
+              width="100%"
+              height="300px"
+              allow="camera; microphone">
+            </iframe>
+          </div>
+        </div>
+        
+        <div class="stream-placeholder" *ngIf="!isStreamActive">
+          <div class="placeholder-content">
+            <ion-icon name="videocam-off-outline" size="large"></ion-icon>
+            <p>Stream not active</p>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    
+    <!-- Detection Info -->
+    <div class="detection-info" *ngIf="isDetectionActive || detectionResults.length > 0">
+      <ion-card class="detection-card">
+        <ion-card-header>
+          <ion-card-title>Detection Results</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="detection-stats">
+            <div class="stat-item">
+              <ion-icon name="people-outline"></ion-icon>
+              <span>Persons: {{ detectionCount }}</span>
+            </div>
+            <div class="stat-item">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>Last Update: {{ lastDetectionTime | date:'short' }}</span>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+    
+    <!-- Detection Controls -->
+    <div class="detection-controls">
+      <ion-button 
+        *ngIf="!isDetectionActive && (selectedVideoFile || selectedImageFile || isStreamActive)"
+        expand="block" 
+        (click)="startDetection()"
+        class="primary-btn start-btn">
+        <ion-icon name="play-outline" slot="start"></ion-icon>
+        Start Detection
+      </ion-button>
+      
+      <ion-button 
+        *ngIf="isDetectionActive"
+        expand="block" 
+        fill="outline"
+        color="danger"
+        (click)="stopDetection()"
+        class="danger-btn stop-btn">
+        <ion-icon name="stop-outline" slot="start"></ion-icon>
+        Stop Detection
+      </ion-button>
+      
+      <ion-button 
+        *ngIf="currentInputType === 'stream'"
+        expand="block" 
+        fill="clear"
+        (click)="toggleStream()"
+        class="secondary-btn stream-btn">
+        <ion-icon [name]="isStreamActive ? 'stop-outline' : 'play-outline'" slot="start"></ion-icon>
+        {{ isStreamActive ? 'Stop Stream' : 'Start Stream' }}
+      </ion-button>
+      
+      <ion-button 
+        *ngIf="detectionCount > 0"
+        expand="block" 
+        fill="clear"
+        color="medium"
+        (click)="resetDetection()"
+        class="reset-btn">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Reset Detection
+      </ion-button>
+    </div>
+    
   </div>
 </ion-content>
+
