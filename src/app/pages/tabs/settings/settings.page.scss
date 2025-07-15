@@ -1,0 +1,50 @@
+/* your-component.page.scss */
+.image-container {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100%;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+
+    ion-spinner {
+        margin-bottom: 16px;
+    }
+
+    p {
+        color: var(--ion-color-medium);
+        margin: 0;
+    }
+}
+
+.main-image {
+    max-width: 100%;
+    max-height: 70vh;
+    width: auto;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+}
+
+.refresh-button {
+    margin-top: 16px;
+    --border-radius: 8px;
+}
+
+ion-card {
+    margin: 16px 0;
+
+    ion-card-content {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+}

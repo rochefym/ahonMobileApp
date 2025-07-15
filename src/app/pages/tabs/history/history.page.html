@@ -4,10 +4,51 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">history</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+
+  <ion-card>
+      <ion-card-header>
+        <ion-card-title>Detection #{{detection.id}}</ion-card-title>
+        <ion-card-subtitle>
+          {{detection.timestamp | date:'medium'}}
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div *ngIf="imageUrl" class="image-container">
+          <img [src]="imageUrl" alt="Detection snapshot" />
+        </div>
+
+        <ion-list>
+          <ion-item>
+            <ion-label>Latitude</ion-label>
+            <ion-note slot="end">{{detection.latitude}}</ion-note>
+          </ion-item>
+          <ion-item>
+            <ion-label>Longitude</ion-label>
+            <ion-note slot="end">{{detection.longitude}}</ion-note>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>  
+    <img 
+          *ngIf="detection.image_url" 
+          [src]="detection.image_url" 
+          [alt]="'Detection ' + detection.id"
+        />
+
+    <ion-item>
+
+      <ion-label>
+        <h2>Detection #{{ detection.id }}</h2>
+        <p>Mission: {{ detection.mission.id }}</p>
+        <p>Location: {{ detection.latitude }}, {{ detection.longitude }}</p>
+        <p>Time: {{ detection.timestamp | date:'medium' }}</p>
+        <ion-badge [color]="detection.is_live ? 'success' : 'medium'">
+          {{ detection.is_live ? 'Live' : 'Captured' }}
+        </ion-badge>
+      </ion-label>
+    </ion-item>
+
+  
 </ion-content>

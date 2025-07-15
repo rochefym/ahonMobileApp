@@ -6,9 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { StreamPageRoutingModule } from './stream-routing.module';
 import { StreamPage } from './stream.page';
 import { HeaderComponent } from 'src/app/components/header/header.component';
-
-// Components
-import { MissionTimerComponent } from "src/app/components/mission-timer/mission-timer.component";
+import { DetectionStreamComponent } from "src/app/components/detection-stream/detection-stream.component";
 
 @NgModule({
   imports: [
@@ -16,11 +14,8 @@ import { MissionTimerComponent } from "src/app/components/mission-timer/mission-
     FormsModule,
     IonicModule,
     StreamPageRoutingModule,
-<<<<<<< Updated upstream
-    HeaderComponent
-=======
-    MissionTimerComponent
->>>>>>> Stashed changes
+    HeaderComponent,
+    DetectionStreamComponent
   ],
   declarations: [StreamPage]
 

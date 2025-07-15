@@ -9,6 +9,7 @@ import { VictimsPageRoutingModule } from './victims-routing.module';
 import { VictimsPage } from './victims.page';
 import { VictimInfoComponent } from 'src/app/components/victim-info/victim-info.component';
 import { HeaderComponent } from 'src/app/components/header/header.component';
+import { VictimFilterComponent } from "src/app/components/victim-filter/victim-filter.component";
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { HeaderComponent } from 'src/app/components/header/header.component';
     IonicModule,
     VictimsPageRoutingModule,
     VictimInfoComponent,
-    HeaderComponent
+    HeaderComponent,
+    VictimFilterComponent
   ],
   declarations: [VictimsPage]
 })

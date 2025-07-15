@@ -4,13 +4,14 @@ import { RouteReuseStrategy } from '@angular/router';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { IonicStorageModule } from '@ionic/storage-angular';
-
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -19,7 +20,7 @@ import { IonicStorageModule } from '@ionic/storage-angular';
     AppRoutingModule,
     FormsModule,
     IonicStorageModule.forRoot(),
-
+    HttpClientModule
   ],
   providers: [InAppBrowser, { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],

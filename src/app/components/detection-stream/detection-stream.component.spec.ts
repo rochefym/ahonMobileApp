@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { StreamComponent } from './stream.component';
+import { DetectionStreamComponent } from './detection-stream.component';
 
-describe('StreamComponent', () => {
-  let component: StreamComponent;
-  let fixture: ComponentFixture<StreamComponent>;
+describe('DetectionStreamComponent', () => {
+  let component: DetectionStreamComponent;
+  let fixture: ComponentFixture<DetectionStreamComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ StreamComponent ],
+      declarations: [ DetectionStreamComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(StreamComponent);
+    fixture = TestBed.createComponent(DetectionStreamComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));
