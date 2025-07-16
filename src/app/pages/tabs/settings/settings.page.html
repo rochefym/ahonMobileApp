@@ -13,48 +13,6 @@
 </ion-header> -->
 
 <ion-content class="settings-content">
-<<<<<<< HEAD
-     <div class="image-container">
-    
-    <!-- Loading spinner -->
-    <div *ngIf="isLoading" class="loading-container">
-      <ion-spinner></ion-spinner>
-      <p>Loading image...</p>
-    </div>
-    
-    <!-- Error message -->
-    <ion-card *ngIf="error && !isLoading" color="danger">
-      <ion-card-content>
-        <ion-icon name="alert-circle"></ion-icon>
-        {{ error }}
-      </ion-card-content>
-    </ion-card>
-    
-    <!-- Image display -->
-    <img 
-      *ngIf="imageUrl && !isLoading && !error" 
-      [src]="imageUrl" 
-      alt="Current Image"
-      class="main-image"
-      (error)="error = 'Failed to display image'"
-      (load)="error = ''"
-    />
-    
-    <!-- Refresh button -->
-    <ion-button 
-      *ngIf="!isLoading" 
-      expand="block" 
-      (click)="refreshImage()"
-      class="refresh-button">
-      <ion-icon name="refresh" slot="start"></ion-icon>
-      Refresh Image
-    </ion-button>
-
-    <img 
-        [src]="currentImageUrl" 
-        alt="Live stream" />
-    
-=======
   <div class="thermal-camera-section">
     <div class="section-header">
       <h2>Thermal Camera</h2>
@@ -182,7 +140,6 @@
         <ion-toggle [(ngModel)]="autoSaveEnabled" (ionChange)="onAutoSaveChange($event)"></ion-toggle>
       </ion-item>
     </div>
->>>>>>> aj/restoffeatures
   </div>
 </ion-content>
           <!-- <h3>Real-time Updates</h3>

@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-<<<<<<< HEAD
-import { ImageStreamService } from 'src/app/services/api/stream/image-stream.service';
-=======
 import { DetectionService } from '../../../services/detection.service';
 import { SettingsService } from '../../../services/settings.service';
->>>>>>> aj/restoffeatures
 
 @Component({
   selector: 'app-settings',
@@ -13,17 +9,6 @@ import { SettingsService } from '../../../services/settings.service';
   standalone: false
 })
 export class SettingsPage implements OnInit {
-<<<<<<< HEAD
-  imageUrl: string = '';
-  isLoading: boolean = false;
-  error: string = '';
-  currentImageUrl: any = 'https://7pd4fg47-8000.asse.devtunnels.ms/api/image/';
-
-  constructor(private imageService: ImageStreamService) { }
-
-  ngOnInit() {
-    this.loadImageBase64();
-=======
   selectedMode: string = 'thermal';
   selectedViewAngle: 'front' | 'angled' | 'top' = 'front';
   confidenceThreshold: number = 70;
@@ -32,80 +17,14 @@ export class SettingsPage implements OnInit {
   constructor(
     private detectionService: DetectionService,
     private settingsService: SettingsService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadSettings();
->>>>>>> aj/restoffeatures
   }
 
   selectMode(mode: string) {
     this.selectedMode = mode;
-<<<<<<< HEAD
-    // Emit event or call service to handle mode change
-    console.log('Selected mode:', mode);
-  }// Method 1: Using blob and object URL (recommended)
-
-
-  loadImage() {
-    this.isLoading = true;
-    this.error = '';
-
-    this.imageService.getImageBlob().subscribe({
-      next: (blob) => {
-        // Clean up previous object URL to prevent memory leaks
-        if (this.imageUrl) {
-          URL.revokeObjectURL(this.imageUrl);
-        }
-
-        // Create new object URL
-        this.imageUrl = URL.createObjectURL(blob);
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading image:', error);
-        this.error = 'Failed to load image';
-        this.isLoading = false;
-      }
-    });
-  }
-
-  // Method 2: Using base64 string
-  loadImageBase64() {
-    this.isLoading = true;
-    this.error = '';
-
-    this.imageService.getImageBase64().subscribe({
-      next: (base64) => {
-        this.imageUrl = base64;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading image:', error);
-        this.error = 'Failed to load image';
-        this.isLoading = false;
-      }
-    });
-  }
-
-  // Method 3: Direct URL (simplest but less control)
-  loadImageDirect() {
-    this.imageUrl = this.imageService.getImageUrl();
-  }
-
-  // Refresh image
-  refreshImage() {
-    this.loadImageBase64();
-  }
-
-  // Clean up object URL when component is destroyed
-  ngOnDestroy() {
-    if (this.imageUrl && this.imageUrl.startsWith('blob:')) {
-      URL.revokeObjectURL(this.imageUrl);
-    }
-  }
-}
-=======
     this.settingsService.setViewMode(mode);
     console.log('View mode changed to:', mode);
   }
@@ -129,10 +48,10 @@ export class SettingsPage implements OnInit {
   onConfidenceChange(event: any) {
     this.confidenceThreshold = event.detail.value;
     this.settingsService.setConfidenceThreshold(this.confidenceThreshold);
-    
+
     // Send confidence threshold to backend in real-time
     this.detectionService.updateConfidenceThreshold(this.confidenceThreshold);
-    
+
     console.log('Confidence threshold changed to:', this.confidenceThreshold);
   }
 
@@ -149,5 +68,4 @@ export class SettingsPage implements OnInit {
     this.autoSaveEnabled = this.settingsService.getAutoSave();
   }
 }
- 
->>>>>>> aj/restoffeatures
+

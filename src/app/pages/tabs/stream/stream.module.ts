@@ -14,13 +14,8 @@ import { DetectionStreamComponent } from "src/app/components/detection-stream/de
     FormsModule,
     IonicModule,
     StreamPageRoutingModule,
-<<<<<<< HEAD
     HeaderComponent,
     DetectionStreamComponent
-=======
-    MissionTimerComponent,
-    HeaderComponent
->>>>>>> aj/restoffeatures
   ],
   declarations: [StreamPage]
 

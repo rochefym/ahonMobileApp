@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
-import { DetectionService } from 'src/app/services/api/detection/detection.service';
-=======
 import { Component, OnInit } from '@angular/core';
 import { AlertController, ToastController } from '@ionic/angular';
 import { DetectionService } from '../../../services/detection.service';
@@ -30,7 +25,6 @@ export interface Victim {
   coordinates?: string;
   detectionTime: Date;
 }
->>>>>>> aj/restoffeatures
 
 @Component({
   selector: 'app-history',
@@ -39,43 +33,15 @@ export interface Victim {
   standalone: false
 })
 export class HistoryPage implements OnInit {
-<<<<<<< HEAD
-  detectionRes: any;
-  detectionResToJSONString: any;
-  detection: any;
-
-  imageUrl: SafeUrl | null = null;
-  imgUrl: any = '';
-
-
-  constructor(
-    private detectionService: DetectionService,
-    private sanitizer: DomSanitizer
-  ) { }
-
-  async ngOnInit() {
-    await this.loadDetections('3');
-  }
-
-  loadDetections(detectionId: string) {
-    this.detectionService.getDetectionById(detectionId).subscribe(
-      data => {
-        this.detection = data;
-      },
-      error => {
-        console.error('Error loading detections:', error);
-      }
-    );
-=======
   missions: Mission[] = [];
   filteredMissions: Mission[] = [];
   expandedMission: string | null = null;
   showFilters: boolean = false;
-  
+
   // Filter options
   selectedDateRange: string = 'all';
   selectedStatus: string = 'all';
-  
+
   // Statistics
   totalMissions: number = 0;
   totalVictims: number = 0;
@@ -87,7 +53,7 @@ export class HistoryPage implements OnInit {
     private detectionService: DetectionService,
     private alertController: AlertController,
     private toastController: ToastController
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadMissions();
@@ -103,16 +69,16 @@ export class HistoryPage implements OnInit {
   calculateStatistics() {
     this.totalMissions = this.missions.length;
     this.totalVictims = this.missions.reduce((sum: number, mission: Mission) => sum + mission.victimsFound, 0);
-    
+
     const completedMissions = this.missions.filter((m: Mission) => m.status === 'Completed').length;
     this.successRate = this.totalMissions > 0 ? Math.round((completedMissions / this.totalMissions) * 100) : 0;
-    
+
     // Calculate average temperature from all victims - replace flatMap with reduce
     const allVictims: Victim[] = this.missions.reduce((acc: Victim[], mission: Mission) => {
       return acc.concat(mission.victims || []);
     }, []);
-    
-    this.avgTemp = allVictims.length > 0 ? 
+
+    this.avgTemp = allVictims.length > 0 ?
       Math.round(allVictims.reduce((sum: number, v: Victim) => sum + v.bodyTemp, 0) / allVictims.length) : 0;
   }
 
@@ -130,12 +96,12 @@ export class HistoryPage implements OnInit {
 
   applyFilters() {
     let filtered = [...this.missions];
-    
+
     // Date range filter
     if (this.selectedDateRange !== 'all') {
       const now = new Date();
       const filterDate = new Date();
-      
+
       switch (this.selectedDateRange) {
         case 'today':
           filterDate.setHours(0, 0, 0, 0);
@@ -147,17 +113,17 @@ export class HistoryPage implements OnInit {
           filterDate.setMonth(now.getMonth() - 1);
           break;
       }
-      
+
       filtered = filtered.filter((mission: Mission) => mission.date >= filterDate);
     }
-    
+
     // Status filter
     if (this.selectedStatus !== 'all') {
-      filtered = filtered.filter((mission: Mission) => 
+      filtered = filtered.filter((mission: Mission) =>
         mission.status.toLowerCase() === this.selectedStatus.toLowerCase()
       );
     }
-    
+
     this.filteredMissions = filtered;
   }
 
@@ -183,7 +149,7 @@ export class HistoryPage implements OnInit {
 
   async viewVictimDetails(victim: Victim, event: Event) {
     event.stopPropagation();
-    
+
     const alert = await this.alertController.create({
       header: `Victim #${victim.id}`,
       message: `
@@ -195,13 +161,13 @@ export class HistoryPage implements OnInit {
       `,
       buttons: ['Close']
     });
-    
+
     await alert.present();
   }
 
   async exportMission(mission: Mission, event: Event) {
     event.stopPropagation();
-    
+
     // In real implementation, this would generate and download a report
     const toast = await this.toastController.create({
       message: `Mission ${mission.id} report exported successfully`,
@@ -209,16 +175,16 @@ export class HistoryPage implements OnInit {
       position: 'top',
       color: 'success'
     });
-    
+
     await toast.present();
-    
+
     // TODO: Implement actual export functionality
     console.log('Exporting mission:', mission);
   }
 
   async deleteMission(missionId: string, event: Event) {
     event.stopPropagation();
-    
+
     const alert = await this.alertController.create({
       header: 'Delete Mission',
       message: 'Are you sure you want to delete this mission? This action cannot be undone.',
@@ -239,7 +205,7 @@ export class HistoryPage implements OnInit {
         }
       ]
     });
-    
+
     await alert.present();
   }
 
@@ -250,12 +216,11 @@ export class HistoryPage implements OnInit {
       position: 'top',
       color: 'success'
     });
-    
+
     await toast.present();
   }
 
   trackMissionById(index: number, mission: Mission): string {
     return mission.id;
->>>>>>> aj/restoffeatures
   }
 }

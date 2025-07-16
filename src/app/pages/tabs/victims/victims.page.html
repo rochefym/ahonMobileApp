@@ -1,7 +1,6 @@
 <app-header></app-header>
 
 <ion-content [fullscreen]="true">
-<<<<<<< HEAD
   <div class="victim-counts">
     <div class="victim-header">
       <ion-icon name="people-outline"></ion-icon>
@@ -33,10 +32,10 @@
 
   <div *ngIf="!loading && !error">
     <!-- Debug view (remove this in production) -->
-    <div class="debug-section">
+    <!-- <div class="debug-section">
       <h3>Raw Data (Debug):</h3>
       <pre>{{ victimsWithDetections | json }}</pre>
-    </div>
+    </div> -->
 
     <!-- By Detection view -->
     <!-- <div  class="detections-container">
@@ -82,7 +81,7 @@
 
   <!-- Victims list view -->
     <div  class="victims-container">
-            <div *ngFor="let item of victimsWithDetections; let i = index" class="victim-wrapper">
+      <div *ngFor="let item of victimsWithDetections; let i = index" class="victim-wrapper">
         <ion-card class="pt-3 pb-4 ps-2 pe-2">
           <div class="detection-context">
             <ion-chip color="primary">
@@ -95,12 +94,10 @@
             </ion-chip>
           </div>
           
-          <!-- Detection Image -->
           <div class="detection-image-container px-2 pt-1 pb-4 ">
             <img [src]="item.detection.image_url" alt="Detection Image" class="detection-image">
           </div>
           
-          <!-- Victim Info Component -->
           <div  class="ms-2 me-2">
             <app-victim-info [victim]="item.victim" [detection]="item.detection"></app-victim-info>
           </div>
@@ -116,41 +113,4 @@
     </div>
 
   <div class="py-4"></div>
-=======
-  <ion-card class="victim-card">
-      <ion-card-content>
-        <div class="card-header">
-          <span class="victim-id">Victim #8965</span>
-          <span class="status-badge stable">STABLE</span>
-        </div>
-        
-        <div class="status-row">
-          <ion-icon name="thermometer-outline" class="status-icon"></ion-icon>
-          <span class="temperature">35.9°C</span>
-        </div>
-        
-        <div class="status-row">
-          <ion-icon name="pulse-outline" class="status-icon"></ion-icon>
-          <span class="pulse-status">
-            <span class="flag-icon">🇱🇷</span>
-            Lying down
-          </span>
-        </div>
-        
-        <div class="status-row">
-          <ion-icon name="location-outline" class="status-icon"></ion-icon>
-          <span class="coordinates">40.716187, -74.002344</span>
-        </div>
-        
-        <div class="detection-info">
-          <span class="detection-time">Detected: 10:48:28 AM</span>
-        </div>
-        
-        <div class="progress-section">
-          <ion-progress-bar value="0.82" class="confidence-bar"></ion-progress-bar>
-          <span class="confidence-text">Confidence: 82%</span>
-        </div>
-      </ion-card-content>
-    </ion-card>
->>>>>>> aj/restoffeatures
 </ion-content>

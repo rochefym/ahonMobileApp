@@ -45,6 +45,10 @@ export class VictimsPage implements OnInit, OnDestroy {
     this.missionSub.unsubscribe();
   }
 
+  async ionViewWillEnter() {
+    await this.loadData(Number(this.currentMission.id));
+  }
+
   detectionRes: any;
   detectionResToJSONString: any;
   detectionRes2: any;

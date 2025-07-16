@@ -1,33 +1,7 @@
-<<<<<<< HEAD
 
 <app-header></app-header>
 
-<ion-content [fullscreen]="true">
-   <div *ngIf="isMissionOngoing == false" class="container">
-    <div class="initial-state">
-      <img src="assets/icon/search-icon.png" alt="Search Icon" class="search-icon">
-      <h2 class="scanner-title">Thermal Scanner Ready</h2>
-      <p class="scanner-subtitle">Start mission to begin thermal scanning</p>
-    </div>
-  </div>
-
-  <app-detection-stream *ngIf="isMissionOngoing == true"></app-detection-stream>
-
-  <ion-button 
-    expand="block" 
-    fill="outline" 
-    (click)="openLiveStream()" 
-    class="ion-margin-top">
-    Open Live Stream  
-  </ion-button>
-
-  <ion-item>
-    Count: {{ count }}
-  </ion-item>
-
-=======
-<app-header></app-header>
-
+   
 <ion-content [fullscreen]="true">
   <div class="stream-page-container">
     
@@ -218,8 +192,29 @@
         Reset Detection
       </ion-button>
     </div>
-    
   </div>
->>>>>>> aj/restoffeatures
+
+  <div *ngIf="isMissionOngoing == false" class="container">
+    <div class="initial-state">
+      <img src="assets/icon/search-icon.png" alt="Search Icon" class="search-icon">
+      <h2 class="scanner-title">Thermal Scanner Ready</h2>
+      <p class="scanner-subtitle">Start mission to begin thermal scanning</p>
+    </div>
+  </div>
+
+  <app-detection-stream *ngIf="isMissionOngoing == true"></app-detection-stream>
+
+  <ion-button 
+    expand="block" 
+    fill="outline" 
+    (click)="openLiveStream()" 
+    class="ion-margin-top">
+    Open Live Stream  
+  </ion-button>
+
+  <!-- <ion-item>
+    Count: {{ count }}
+  </ion-item> -->
+
 </ion-content>
 

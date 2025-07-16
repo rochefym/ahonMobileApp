@@ -100,7 +100,7 @@ export class DetectionService {
         },
         body: JSON.stringify({ confidence_threshold: threshold / 100 }) // Convert to 0-1 range
       });
-      
+
       if (response.ok) {
         console.log('Confidence threshold updated on backend:', threshold);
       }
