@@ -1,11 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { InAppBrowser, InAppBrowserOptions } from '@awesome-cordova-plugins/in-app-browser/ngx';
-
-import { DetectionService } from 'src/app/services/api/detection/detection.service';
-
-import { Subscription } from 'rxjs';
-import { MissionStateService } from 'src/app/services/state/mission/mission-state.service';
-
 @Component({
   selector: 'app-stream',
   templateUrl: './stream.page.html',
@@ -14,42 +8,14 @@ import { MissionStateService } from 'src/app/services/state/mission/mission-stat
 })
 
 
-export class StreamPage implements OnInit, OnDestroy {
-  baseUrl: string = 'http://192.168.1.4:8000';
-  url: string = 'http://192.168.1.4:8000/api/detection-stream/';
+export class StreamPage {
+  baseUrl: string = 'http://172.29.9.192:8000';
+  url: string = 'http://172.29.9.192:8000/api/stream';
+  url2: string = 'http://172.29.9.192:8000/api/yolo-stream';
 
   count: number = 0;
 
-  private isMissionOngoingSubscription!: Subscription;
-  isMissionOngoing: boolean = false;
-
-  private missionSub!: Subscription;
-  currentMission: any;
-
-  constructor(
-    private iab: InAppBrowser,
-    private detectionService: DetectionService,
-    private missionStateService: MissionStateService
-  ) {
-    // Subscribe to mission status changes
-    this.isMissionOngoingSubscription = this.missionStateService.isMissionOngoing$.subscribe(isOngoing => {
-      this.isMissionOngoing = isOngoing;
-    });
-
-    // Subscribe to mission changes
-    this.missionSub = this.missionStateService.currentMission$.subscribe(mission => {
-      this.currentMission = mission;
-    });
-  }
-
-  ngOnInit() {
-
-  }
-
-  ngOnDestroy() {
-    this.isMissionOngoingSubscription.unsubscribe();
-    this.missionSub.unsubscribe();
-  }
+  constructor(private iab: InAppBrowser) { }
 
   openBrowser() {
     if (!this.url) return;
@@ -87,7 +53,6 @@ export class StreamPage implements OnInit, OnDestroy {
     browser.on('loadstop').subscribe(() => {
       console.log('Load stop event fired');
       this.count = this.count + 1;
-      this.captureDetection();
       this.injectCustomButtons(browser);
     });
 

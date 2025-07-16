@@ -1,0 +1,40 @@
+.input-selector-container {
+  margin: 16px;
+  
+  ion-segment {
+    --background: var(--ion-color-dark);
+    border-radius: 12px;
+    padding: 4px;
+    
+    ion-segment-button {
+      --background-checked: var(--ion-color-primary);
+      --color-checked: white;
+      --color: var(--ion-color-medium);
+      --border-radius: 8px;
+      
+      ion-icon {
+        margin-bottom: 4px;
+      }
+      
+      ion-label {
+        font-size: 12px;
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .upload-controls {
+    margin-top: 16px;
+    
+    .upload-btn {
+      --border-color: var(--ion-color-primary);
+      --color: var(--ion-color-primary);
+      height: 48px;
+      font-weight: 500;
+      
+      &:hover {
+        --background: rgba(var(--ion-color-primary-rgb), 0.1);
+      }
+    }
+  }
+}
