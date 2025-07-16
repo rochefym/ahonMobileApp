@@ -10,6 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { IonicStorageModule } from '@ionic/storage-angular';
+import { HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent],
@@ -19,6 +20,7 @@ import { IonicStorageModule } from '@ionic/storage-angular';
     AppRoutingModule,
     FormsModule,
     IonicStorageModule.forRoot(),
+    HttpClientModule,
 
   ],
   providers: [InAppBrowser, { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],

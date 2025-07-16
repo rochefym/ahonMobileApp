@@ -1,46 +1,118 @@
 <app-header></app-header>
 
-
-<!-- <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>victims</ion-title>
-  </ion-toolbar>
-</ion-header> -->
-
 <ion-content [fullscreen]="true">
-  <ion-card class="victim-card">
-      <ion-card-content>
-        <div class="card-header">
-          <span class="victim-id">Victim #8965</span>
-          <span class="status-badge stable">STABLE</span>
-        </div>
+  <div class="victim-counts">
+    <div class="victim-header">
+      <ion-icon name="people-outline"></ion-icon>
+      <span>Detected Victims</span>
+    </div>
+    <p class="victim-status">{{ victimsWithDetections.length }} people detected</p>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner></ion-spinner>
+    <p>Loading detections and victims...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <ion-text color="danger">{{ error }}</ion-text>
+  </div>
+
+
+  <app-victim-filter></app-victim-filter>
+  
+  
+  <!-- Debug view (remove this in production) -->
+   <!-- <p>{{currentMission | json}}</p>
+  <p>{{currentMission.id}}</p> -->
+  <!-- <div>
+    <pre>{{victimsWithDetections | json}}</pre>
+  </div> -->
+
+
+  <div *ngIf="!loading && !error">
+    <!-- Debug view (remove this in production) -->
+    <div class="debug-section">
+      <h3>Raw Data (Debug):</h3>
+      <pre>{{ victimsWithDetections | json }}</pre>
+    </div>
+
+    <!-- By Detection view -->
+    <!-- <div  class="detections-container">
+      <h2>Detections with Victims</h2>
+      
+      <div *ngFor="let item of detectionsWithVictims; let i = index" class="detection-card">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Detection #{{ item.detection.id }}</ion-card-title>
+            <ion-card-subtitle>
+              Timestamp: {{ item.detection.timestamp | date:'medium' }}
+            </ion-card-subtitle>
+          </ion-card-header>
+          
+          <ion-card-content>
+            <div class="detection-info">
+              <p><strong>Mission ID:</strong> {{ item.detection.mission.id }}</p>
+              <p><strong>Latitude:</strong> {{ item.detection.latitude }}</p>
+              <p><strong>Longitude:</strong> {{ item.detection.longitude }}</p>
+              <p><strong>Is Live:</strong> {{ item.detection.is_live ? 'Yes' : 'No' }}</p>
+            </div>
+
+            <img [src]="item.detection.image_url" alt="detectionImg">
+
+            <div class="victims-section">
+              <h4>Victims ({{ item.victims.length }})</h4>
+              
+              <div *ngIf="item.victims.length === 0" class="no-victims">
+                <ion-text color="medium">No victims found for this detection</ion-text>
+              </div>
+              
+              <div *ngFor="let victim of item.victims" class="victim-card ps-0 pe-0 m-0">
+                <app-victim-info [victim]="victim" [detection]="item.detection"></app-victim-info>
+                <div class="pt-4 "></div>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div> -->
+  </div>
+
+
+  <!-- Victims list view -->
+    <div  class="victims-container">
+            <div *ngFor="let item of victimsWithDetections; let i = index" class="victim-wrapper">
+        <ion-card class="pt-3 pb-4 ps-2 pe-2">
+          <div class="detection-context">
+            <ion-chip color="primary">
+              <ion-icon name="camera-outline"></ion-icon>
+              <ion-label>Detection #{{ item.detection.id }}</ion-label>
+            </ion-chip>
+            <ion-chip color="secondary">
+              <ion-icon name="time-outline"></ion-icon>
+              <ion-label>{{ item.detection.timestamp | date:'short' }}</ion-label>
+            </ion-chip>
+          </div>
+          
+          <!-- Detection Image -->
+          <div class="detection-image-container px-2 pt-1 pb-4 ">
+            <img [src]="item.detection.image_url" alt="Detection Image" class="detection-image">
+          </div>
+          
+          <!-- Victim Info Component -->
+          <div  class="ms-2 me-2">
+            <app-victim-info [victim]="item.victim" [detection]="item.detection"></app-victim-info>
+          </div>
+        </ion-card>
         
-        <div class="status-row">
-          <ion-icon name="thermometer-outline" class="status-icon"></ion-icon>
-          <span class="temperature">35.9°C</span>
-        </div>
-        
-        <div class="status-row">
-          <ion-icon name="pulse-outline" class="status-icon"></ion-icon>
-          <span class="pulse-status">
-            <span class="flag-icon">🇱🇷</span>
-            Lying down
-          </span>
-        </div>
-        
-        <div class="status-row">
-          <ion-icon name="location-outline" class="status-icon"></ion-icon>
-          <span class="coordinates">40.716187, -74.002344</span>
-        </div>
-        
-        <div class="detection-info">
-          <span class="detection-time">Detected: 10:48:28 AM</span>
-        </div>
-        
-        <div class="progress-section">
-          <ion-progress-bar value="0.82" class="confidence-bar"></ion-progress-bar>
-          <span class="confidence-text">Confidence: 82%</span>
-        </div>
-      </ion-card-content>
-    </ion-card>
+        <div class="separator"></div>
+        <div class="pt-4"></div>
+      </div>
+      
+      <div *ngIf="victimsWithDetections.length === 0" class="no-victims">
+        <ion-text color="medium">No victims found for this mission</ion-text>
+      </div>
+    </div>
+
+  <div class="py-4"></div>
 </ion-content>
