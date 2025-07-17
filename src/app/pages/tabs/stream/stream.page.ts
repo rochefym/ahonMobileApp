@@ -33,8 +33,12 @@ export class StreamPage implements OnInit, OnDestroy {
   detectionCount = 0;
   lastDetectionTime: Date | null = null;
 
-  private detectionSubscription: Subscription;
-  private detectionInterval: any;
+  detectionSubscription: Subscription;
+  detectionInterval: any;
+  isMissionOngoingSubscription!: Subscription;
+  isMissionOngoing: boolean = false;
+  missionSub!: Subscription;
+  currentMission: any;
 
   baseUrl: string = 'http://192.168.1.4:8000';
   url: string = 'http://192.168.1.4:8000/api/detection-stream/';
@@ -49,7 +53,10 @@ export class StreamPage implements OnInit, OnDestroy {
     this.detectionSubscription = this.detectionService.detectionCount$.subscribe(
       count => this.detectionCount = count
     );
+  }
 
+
+  ngOnInit() {
     // Subscribe to mission status changes
     this.isMissionOngoingSubscription = this.missionStateService.isMissionOngoing$.subscribe(isOngoing => {
       this.isMissionOngoing = isOngoing;
@@ -61,22 +68,11 @@ export class StreamPage implements OnInit, OnDestroy {
     });
   }
 
-  private isMissionOngoingSubscription!: Subscription;
-  isMissionOngoing: boolean = false;
-
-  private missionSub!: Subscription;
-  currentMission: any;
-
-
-
-  ngOnInit() {
-
-  }
-
   ngOnDestroy() {
     if (this.detectionSubscription) {
       this.detectionSubscription.unsubscribe();
     }
+
     if (this.detectionInterval) {
       clearInterval(this.detectionInterval);
     }
@@ -207,7 +203,6 @@ export class StreamPage implements OnInit, OnDestroy {
   private async performImageDetection() {
     try {
       if (!this.selectedImageFile) return;
-
       // Convert image to FormData for API call
       const formData = new FormData();
       // In real implementation, you'd convert the image file to blob

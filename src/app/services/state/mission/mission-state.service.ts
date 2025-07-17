@@ -5,11 +5,11 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class MissionStateService {
-  //a. Current Mission Subject State
+  // Current Mission Subject State
   private missionSubject = new BehaviorSubject<any | null>(null);
   public currentMission$ = this.missionSubject.asObservable();
 
-  //b. Mission Ongoing (Started/Ended) Subject State
+  // Mission Ongoing (Started/Ended) Subject State
   private isMissionOngoingSubject = new BehaviorSubject<boolean>(false);
   public isMissionOngoing$ = this.isMissionOngoingSubject.asObservable();
 

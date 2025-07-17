@@ -13,10 +13,12 @@
       </div>
     </div>
 
+  
   <ion-button class="px-3" fill="solid" (click)="captureDetection()">
     <ion-icon slot="start" name="play-outline"></ion-icon> 
     Capture Detection
   </ion-button>
+  
     
     <!-- <div class="stream-controls">
       <ion-button 
@@ -26,5 +28,10 @@
         <ion-icon [name]="isStreaming ? 'stop' : 'play'" slot="start"></ion-icon>
         {{ isStreaming ? 'Stop Stream' : 'Start Stream' }}
       </ion-button>
+    </div> -->
+
+    <!-- <div>
+      <h1>Current Mission id: {{currentMission.id}}</h1>
+      <h1>Victim Count: {{victimsRes.length}}</h1>
     </div> -->
   </div>

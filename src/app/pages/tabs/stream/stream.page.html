@@ -1,8 +1,9 @@
 
 <app-header></app-header>
-
    
 <ion-content [fullscreen]="true">
+
+  <!-- <h1>{{currentMission | json}}</h1> -->
   <div class="stream-page-container">
     
     <!-- Input Type Selector -->
@@ -22,7 +23,6 @@
     
     <!-- Main Display Area -->
     <div class="main-display">
-      
       <!-- Video Display -->
       <div class="video-container" *ngIf="currentInputType === 'video'">
         <div class="file-input-section">
@@ -96,7 +96,7 @@
       
       <!-- Stream Display -->
       <div class="stream-container" *ngIf="currentInputType === 'stream'">
-        <div class="stream-controls">
+        <!-- <div class="stream-controls">
           <ion-button 
             fill="outline" 
             (click)="toggleStreamType()"
@@ -104,17 +104,17 @@
             <ion-icon [name]="streamType === 'regular' ? 'eye-outline' : 'videocam-outline'" slot="start"></ion-icon>
             {{ streamType === 'regular' ? 'Switch to Model POV' : 'Switch to Regular' }}
           </ion-button>
-        </div>
-        
+        </div> -->
         <div class="stream-display" *ngIf="isStreamActive">
           <div class="media-wrapper">
-            <iframe 
+            <!-- <iframe 
               [src]="getCurrentStreamUrl()"
               frameborder="0"
               width="100%"
               height="300px"
               allow="camera; microphone">
-            </iframe>
+            </iframe> -->
+            <app-detection-stream ></app-detection-stream>
           </div>
         </div>
         
@@ -151,8 +151,9 @@
     
     <!-- Detection Controls -->
     <div class="detection-controls">
+      <!-- || *ngIf="!isDetectionActive && (selectedVideoFile || selectedImageFile || isStreamActive)" -->
       <ion-button 
-        *ngIf="!isDetectionActive && (selectedVideoFile || selectedImageFile || isStreamActive)"
+        *ngIf="!isDetectionActive && (selectedVideoFile || selectedImageFile )" 
         expand="block" 
         (click)="startDetection()"
         class="primary-btn start-btn">
@@ -176,7 +177,7 @@
         expand="block" 
         fill="clear"
         (click)="toggleStream()"
-        class="secondary-btn stream-btn">
+        class="secondary-btn">
         <ion-icon [name]="isStreamActive ? 'stop-outline' : 'play-outline'" slot="start"></ion-icon>
         {{ isStreamActive ? 'Stop Stream' : 'Start Stream' }}
       </ion-button>
@@ -194,15 +195,15 @@
     </div>
   </div>
 
-  <div *ngIf="isMissionOngoing == false" class="container">
+  <!-- <div *ngIf="isMissionOngoing == false" class="container">
     <div class="initial-state">
       <img src="assets/icon/search-icon.png" alt="Search Icon" class="search-icon">
       <h2 class="scanner-title">Thermal Scanner Ready</h2>
       <p class="scanner-subtitle">Start mission to begin thermal scanning</p>
     </div>
-  </div>
+  </div> -->
 
-  <app-detection-stream *ngIf="isMissionOngoing == true"></app-detection-stream>
+  <!-- <app-detection-stream *ngIf="isMissionOngoing == true"></app-detection-stream> -->
 
   <ion-button 
     expand="block" 

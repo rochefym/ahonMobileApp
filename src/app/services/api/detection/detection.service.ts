@@ -22,8 +22,7 @@ export class DetectionService {
       is_live: detection.is_live,
     };
 
-    return this.http.post(this.baseUrl + '/capture-detection/', body,
-      { headers: this.httpHeaders });
+    return this.http.post(this.baseUrl + '/capture-detection/', body, { headers: this.httpHeaders });
   }
 
 

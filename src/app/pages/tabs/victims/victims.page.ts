@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { DetectionService } from 'src/app/services/api/detection/detection.service';
 import { LoadingController, AlertController, ToastController } from '@ionic/angular';
 import { forkJoin, Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+
+import { DetectionService } from 'src/app/services/api/detection/detection.service';
 import { MissionStateService } from 'src/app/services/state/mission/mission-state.service';
 
 @Component({
@@ -30,9 +31,7 @@ export class VictimsPage implements OnInit, OnDestroy {
     private loadingController: LoadingController,
     private alertController: AlertController,
     private toastController: ToastController
-  ) {
-
-  }
+  ) { }
 
   async ngOnInit() {
     this.missionSub = this.missionStateService.currentMission$.subscribe(mission => {
