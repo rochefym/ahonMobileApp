@@ -2,18 +2,20 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AlertController, ToastController } from '@ionic/angular';
 import { IonButton, IonIcon } from "@ionic/angular/standalone";
 import { Subscription } from 'rxjs';
-import { JsonPipe } from '@angular/common';
+// import { JsonPipe } from '@angular/common';
 
 import { DetectionService } from 'src/app/services/api/detection/detection.service';
 import { MissionStateService } from 'src/app/services/state/mission/mission-state.service';
 import { VictimService } from 'src/app/services/api/victim/victim.service';
 import { VictimsStateService } from 'src/app/services/state/victims/victims-state.service';
 import { DetectionApiResponseService } from 'src/app/services/api/detection/detection-api-response.service';
+import { MissionService, Mission } from 'src/app/services/api/mission/mission.service';
+
 @Component({
   selector: 'app-detection-stream',
   templateUrl: './detection-stream.component.html',
   styleUrls: ['./detection-stream.component.scss'],
-  imports: [IonIcon, IonButton, JsonPipe],
+  imports: [IonIcon, IonButton],
   standalone: true
 })
 export class DetectionStreamComponent implements OnInit, OnDestroy {
@@ -32,6 +34,7 @@ export class DetectionStreamComponent implements OnInit, OnDestroy {
   constructor(
     private detectionService: DetectionService,
     private missionStateService: MissionStateService,
+    private missionService: MissionService,
     private victimService: VictimService,
     private victimStateService: VictimsStateService,
     private toastController: ToastController,
@@ -48,6 +51,13 @@ export class DetectionStreamComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+     this.missionSub = this.missionService.currentMission$.subscribe(mission => {
+      this.currentMission = mission;
+    });
+
+    this.victimsSub = this.victimStateService.victimsCount$.subscribe(count => {
+      this.victimsCount = count;
+    });
     // Auto-start stream on page load
     this.startStream();
   }
@@ -103,14 +113,17 @@ export class DetectionStreamComponent implements OnInit, OnDestroy {
       is_live: 'False' // Set to true for live detection
     };
 
-    this.detectionService.captureDetection(detection).subscribe(
-      async response => {
+    this.detectionService.captureDetection(detection).subscribe({
+      next: async (response) => {
         this.detectionRes = response;
         await this.getVictimsWithDetection();
-        // this.presentToast(this.detectionRes);
+        this.presentToast('Detection captured successfully!', 2000, 'top');
       },
-      error => { console.error('Error capturing detection:', error); }
-    );
+      error: (error) => {
+        console.error('Error capturing detection:', error);
+        this.presentToast('Failed to capture detection.', 3000, 'top');
+      }
+    });
   }
 
   async getVictimsWithDetection() {

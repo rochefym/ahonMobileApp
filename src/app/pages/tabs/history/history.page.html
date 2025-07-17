@@ -2,78 +2,14 @@
 
 <ion-content [fullscreen]="true">
   <div class="history-page-container">
-    
-    <!-- All Missions Statistics Summary -->
-    <!-- <div class="stats-summary">
-      <ion-card class="stats-card">
-        <ion-card-content>
-          <div class="stats-grid">
-            <div class="stat-item">
-              <div class="stat-value">{{ totalMissions }}</div>
-              <div class="stat-label">Total Missions</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value">{{ totalVictims }}</div>
-              <div class="stat-label">Victims Found</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value">{{ successRate }}%</div>
-              <div class="stat-label">Success Rate</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value">{{ avgTemp }}°C</div>
-              <div class="stat-label">Avg Temperature</div>
-            </div>
-          </div>
-        </ion-card-content>
-      </ion-card>
-    </div> -->
-    
-    <!-- Filter Controls -->
-    <div class="filter-section">
-      <div class="filter-header">
-        <h3>Mission History</h3>
-        <ion-button 
-          fill="clear" 
-          size="small" 
-          (click)="toggleFilters()"
-          class="filter-toggle">
-          <ion-icon name="filter-outline" slot="start"></ion-icon>
-          Filters
-        </ion-button>
-      </div>
-      
-      <div class="filter-controls" *ngIf="showFilters">
-        <div class="filter-row">
-          <ion-item class="filter-item">
-            <ion-label>Date Range</ion-label>
-            <ion-select [(ngModel)]="selectedDateRange" (ionChange)="onDateRangeChange()">
-              <ion-select-option value="today">Today</ion-select-option>
-              <ion-select-option value="week">This Week</ion-select-option>
-              <ion-select-option value="month">This Month</ion-select-option>
-              <ion-select-option value="all">All Time</ion-select-option>
-            </ion-select>
-          </ion-item>
-          
-          <ion-item class="filter-item">
-            <ion-label>Mission Status</ion-label>
-            <ion-select [(ngModel)]="selectedStatus" (ionChange)="onStatusChange()">
-              <ion-select-option value="all">All</ion-select-option>
-              <ion-select-option value="completed">Completed</ion-select-option>
-              <ion-select-option value="aborted">Aborted</ion-select-option>
-              <ion-select-option value="ongoing">Ongoing</ion-select-option>
-            </ion-select>
-          </ion-item>
-        </div>
-      </div>
-    </div>
+    <!-- ... existing filter controls ... -->
     
     <!-- Mission List -->
-    <div class="mission-list" *ngIf="filteredMissions.length > 0">
+    <div class="mission-list" *ngIf="(missions$ | async) as missions">
       <ion-card 
-        *ngFor="let mission of filteredMissions; trackBy: trackMissionById"
+        *ngFor="let mission of missions; trackBy: trackMissionById"
         class="mission-card"
-        [class.expanded]="expandedMission === mission.id"
+        [class.expanded]="expandedMissionId === mission.id"
         (click)="toggleMissionExpansion(mission.id)">
         
         <!-- Mission Header -->
@@ -81,7 +17,7 @@
           <div class="mission-info">
             <div class="mission-date">
               <ion-icon name="calendar-outline"></ion-icon>
-              <span>{{ mission.date | date:'MMM dd, yyyy' }}</span>
+              <span>{{ mission.date_time_started | date:'MMM dd, yyyy' }}</span>
             </div>
             <div class="mission-duration">
               <ion-icon name="time-outline"></ion-icon>
@@ -91,49 +27,49 @@
           
           <div class="mission-stats">
             <div class="mission-status" [class]="'status-' + mission.status.toLowerCase()">
-              <ion-icon [name]="getStatusIcon(mission.status)"></ion-icon>
+              <ion-icon [name]="getStatusIcon(mission)"></ion-icon>
               <span>{{ mission.status }}</span>
             </div>
             <div class="victims-count">
               <ion-icon name="people-outline"></ion-icon>
-              <span>{{ mission.victimsFound }} found</span>
+              <span>{{ mission.victims_found }} found</span>
             </div>
           </div>
         </ion-card-header>
         
         <!-- Mission Content -->
-        <ion-card-content class="mission-content">
+        <ion-card-content class="mission-content" *ngIf="expandedMissionId === mission.id">
           <div class="mission-summary">
             <div class="summary-item">
               <span class="label">Mission ID:</span>
-              <span class="value">{{ mission.id }}</span>
+              <span class="value">{{ mission.mission_id_str }}</span>
             </div>
             <div class="summary-item">
               <span class="label">Detection Model:</span>
-              <span class="value">{{ mission.model | titlecase }}</span>
+              <span class="value">{{ mission.detection_model | titlecase }}</span>
             </div>
             <div class="summary-item">
               <span class="label">Confidence Threshold:</span>
-              <span class="value">{{ mission.confidenceThreshold }}%</span>
+              <span class="value">{{ mission.confidence_threshold }}%</span>
             </div>
           </div>
           
           <!-- Expanded Details -->
-          <div class="mission-details" *ngIf="expandedMission === mission.id">
+          <div class="mission-details">
             <div class="details-section">
               <h4>Detection Details</h4>
               <div class="detection-summary">
                 <div class="detection-item">
                   <span class="label">Total Detections:</span>
-                  <span class="value">{{ mission.totalDetections }}</span>
+                  <span class="value">{{ mission.total_detections }}</span>
                 </div>
                 <div class="detection-item">
                   <span class="label">Average Confidence:</span>
-                  <span class="value">{{ mission.avgConfidence }}%</span>
+                  <span class="value">{{ mission.average_confidence }}%</span>
                 </div>
                 <div class="detection-item">
                   <span class="label">Temperature Range:</span>
-                  <span class="value">{{ mission.tempRange }}</span>
+                  <span class="value">{{ mission.temperature_range }}</span>
                 </div>
               </div>
             </div>
@@ -145,20 +81,16 @@
                   *ngFor="let victim of mission.victims"
                   class="victim-item">
                   <div class="victim-info">
-                    <div class="victim-id">Victim #{{ victim.id }}</div>
+                    <div class="victim-id">Victim #{{ victim.victim_id_str }}</div>
                     <div class="victim-details">
                       <span class="victim-status" [class]="'status-' + victim.status.toLowerCase()">
                         {{ victim.status }}
                       </span>
-                      <span class="victim-temp">{{ victim.bodyTemp }}°C</span>
+                      <span class="victim-temp">{{ victim.temperature }}°C</span>
                       <span class="victim-confidence">{{ victim.confidence }}%</span>
                     </div>
                   </div>
-                  <div class="victim-actions">
-                    <ion-button fill="clear" size="small" (click)="viewVictimDetails(victim, $event)">
-                      <ion-icon name="eye-outline"></ion-icon>
-                    </ion-button>
-                  </div>
+                  <!-- ... victim actions ... -->
                 </div>
               </div>
             </div>
@@ -187,16 +119,12 @@
         </ion-card-content>
       </ion-card>
     </div>
-    
+
     <!-- Empty State -->
-    <div class="empty-state" *ngIf="filteredMissions.length === 0">
+    <div class="empty-state" *ngIf="!(missions$ | async)?.length">
       <ion-icon name="document-text-outline" size="large"></ion-icon>
       <h3>No Mission History</h3>
-      <p>No missions found matching your criteria.</p>
-      <ion-button fill="outline" (click)="clearFilters()">
-        <ion-icon name="refresh-outline" slot="start"></ion-icon>
-        Clear Filters
-      </ion-button>
+      <p>Start a new mission to see your history here.</p>
     </div>
     
   </div>

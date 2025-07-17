@@ -1,30 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, ToastController } from '@ionic/angular';
-import { DetectionService } from '../../../services/detection.service';
-import { HistoryService } from '../../../services/history.service';
-
-export interface Mission {
-  id: string;
-  date: Date;
-  duration: string;
-  status: 'Completed' | 'Aborted' | 'Ongoing';
-  victimsFound: number;
-  totalDetections: number;
-  avgConfidence: number;
-  confidenceThreshold: number;
-  model: 'front' | 'angled' | 'top';
-  tempRange: string;
-  victims?: Victim[];
-}
-
-export interface Victim {
-  id: string;
-  status: 'Stable' | 'Critical' | 'Deceased';
-  bodyTemp: number;
-  confidence: number;
-  coordinates?: string;
-  detectionTime: Date;
-}
+import { MissionService, Mission } from '../../../services/api/mission/mission.service';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { CommonModule, TitleCasePipe } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { HeaderComponent } from 'src/app/components/header/header.component';
 
 @Component({
   selector: 'app-history',
@@ -33,194 +14,94 @@ export interface Victim {
   standalone: false
 })
 export class HistoryPage implements OnInit {
-  missions: Mission[] = [];
-  filteredMissions: Mission[] = [];
-  expandedMission: string | null = null;
-  showFilters: boolean = false;
-
-  // Filter options
-  selectedDateRange: string = 'all';
-  selectedStatus: string = 'all';
-
-  // Statistics
-  totalMissions: number = 0;
-  totalVictims: number = 0;
-  successRate: number = 0;
-  avgTemp: number = 0;
+  public missions$: Observable<Mission[]>;
+  expandedMissionId: number | null = null;
 
   constructor(
-    private historyService: HistoryService,
-    private detectionService: DetectionService,
+    private missionService: MissionService,
     private alertController: AlertController,
     private toastController: ToastController
-  ) { }
+  ) {
+    this.missions$ = this.missionService.missionHistory$;
+  }
 
   ngOnInit() {
-    this.loadMissions();
-    this.calculateStatistics();
+    // Data is loaded via the observable in the template
   }
 
-  loadMissions() {
-    // Load from service (will be connected to backend later)
-    this.missions = this.historyService.getMissions();
-    this.filteredMissions = [...this.missions];
+  // Use ionViewWillEnter to ensure the data is fresh every time the user visits the page.
+  ionViewWillEnter() {
+    this.missionService.loadMissionHistory().subscribe();
   }
 
-  calculateStatistics() {
-    this.totalMissions = this.missions.length;
-    this.totalVictims = this.missions.reduce((sum: number, mission: Mission) => sum + mission.victimsFound, 0);
-
-    const completedMissions = this.missions.filter((m: Mission) => m.status === 'Completed').length;
-    this.successRate = this.totalMissions > 0 ? Math.round((completedMissions / this.totalMissions) * 100) : 0;
-
-    // Calculate average temperature from all victims - replace flatMap with reduce
-    const allVictims: Victim[] = this.missions.reduce((acc: Victim[], mission: Mission) => {
-      return acc.concat(mission.victims || []);
-    }, []);
-
-    this.avgTemp = allVictims.length > 0 ?
-      Math.round(allVictims.reduce((sum: number, v: Victim) => sum + v.bodyTemp, 0) / allVictims.length) : 0;
+  toggleMissionExpansion(missionId: number) {
+    this.expandedMissionId = this.expandedMissionId === missionId ? null : missionId;
   }
 
-  toggleFilters() {
-    this.showFilters = !this.showFilters;
-  }
-
-  onDateRangeChange() {
-    this.applyFilters();
-  }
-
-  onStatusChange() {
-    this.applyFilters();
-  }
-
-  applyFilters() {
-    let filtered = [...this.missions];
-
-    // Date range filter
-    if (this.selectedDateRange !== 'all') {
-      const now = new Date();
-      const filterDate = new Date();
-
-      switch (this.selectedDateRange) {
-        case 'today':
-          filterDate.setHours(0, 0, 0, 0);
-          break;
-        case 'week':
-          filterDate.setDate(now.getDate() - 7);
-          break;
-        case 'month':
-          filterDate.setMonth(now.getMonth() - 1);
-          break;
-      }
-
-      filtered = filtered.filter((mission: Mission) => mission.date >= filterDate);
+  getStatusIcon(mission: Mission): string {
+    if (mission.status === 'Completed') {
+      return 'checkmark-circle-outline';
+    } else if (mission.status === 'Aborted') {
+      return 'close-circle-outline';
     }
-
-    // Status filter
-    if (this.selectedStatus !== 'all') {
-      filtered = filtered.filter((mission: Mission) =>
-        mission.status.toLowerCase() === this.selectedStatus.toLowerCase()
-      );
-    }
-
-    this.filteredMissions = filtered;
+    return 'hourglass-outline'; // For 'In Progress'
   }
 
-  clearFilters() {
-    this.selectedDateRange = 'all';
-    this.selectedStatus = 'all';
-    this.filteredMissions = [...this.missions];
-    this.showFilters = false;
-  }
-
-  toggleMissionExpansion(missionId: string) {
-    this.expandedMission = this.expandedMission === missionId ? null : missionId;
-  }
-
-  getStatusIcon(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'completed': return 'checkmark-circle-outline';
-      case 'aborted': return 'close-circle-outline';
-      case 'ongoing': return 'time-outline';
-      default: return 'help-circle-outline';
-    }
-  }
-
-  async viewVictimDetails(victim: Victim, event: Event) {
-    event.stopPropagation();
-
-    const alert = await this.alertController.create({
-      header: `Victim #${victim.id}`,
-      message: `
-        <strong>Status:</strong> ${victim.status}<br>
-        <strong>Body Temperature:</strong> ${victim.bodyTemp}°C<br>
-        <strong>Detection Confidence:</strong> ${victim.confidence}%<br>
-        <strong>Detection Time:</strong> ${victim.detectionTime.toLocaleString()}<br>
-        ${victim.coordinates ? `<strong>Coordinates:</strong> ${victim.coordinates}` : ''}
-      `,
-      buttons: ['Close']
-    });
-
-    await alert.present();
-  }
-
-  async exportMission(mission: Mission, event: Event) {
-    event.stopPropagation();
-
-    // In real implementation, this would generate and download a report
-    const toast = await this.toastController.create({
-      message: `Mission ${mission.id} report exported successfully`,
-      duration: 2000,
-      position: 'top',
-      color: 'success'
-    });
-
-    await toast.present();
-
-    // TODO: Implement actual export functionality
-    console.log('Exporting mission:', mission);
-  }
-
-  async deleteMission(missionId: string, event: Event) {
-    event.stopPropagation();
+  async deleteMission(missionId: number, event: Event) {
+    event.stopPropagation(); // Prevent the card from expanding
 
     const alert = await this.alertController.create({
       header: 'Delete Mission',
-      message: 'Are you sure you want to delete this mission? This action cannot be undone.',
+      message: 'Are you sure you want to delete this mission? This action is permanent.',
       buttons: [
         {
           text: 'Cancel',
-          role: 'cancel'
+          role: 'cancel',
         },
         {
           text: 'Delete',
           role: 'destructive',
           handler: () => {
-            this.historyService.deleteMission(missionId);
-            this.loadMissions();
-            this.calculateStatistics();
-            this.showDeletedToast();
-          }
-        }
-      ]
+            this.missionService.deleteMission(missionId).subscribe({
+              next: () => this.showDeletedToast('Mission deleted successfully.'),
+              error: (err) => {
+                console.error('Error deleting mission', err);
+                this.showDeletedToast('Failed to delete mission.', 'danger');
+              }
+            });
+          },
+        },
+      ],
     });
 
     await alert.present();
   }
 
-  async showDeletedToast() {
+  // Placeholder for the export functionality
+  async exportMission(mission: Mission, event: Event) {
+    event.stopPropagation();
+    console.log('Exporting mission:', mission.mission_id_str);
     const toast = await this.toastController.create({
-      message: 'Mission deleted successfully',
+      message: `Exporting report for ${mission.mission_id_str}...`,
       duration: 2000,
       position: 'top',
-      color: 'success'
     });
+    await toast.present();
+    // TODO: Implement actual report generation and export logic here.
+  }
 
+  async showDeletedToast(message: string, color: string = 'success') {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 2000,
+      position: 'top',
+      color: color,
+    });
     await toast.present();
   }
 
-  trackMissionById(index: number, mission: Mission): string {
+  // This function is used by *ngFor to improve performance by tracking items by their unique ID.
+  trackMissionById(index: number, mission: Mission): number {
     return mission.id;
   }
 }
