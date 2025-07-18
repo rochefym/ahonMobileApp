@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DetectionService } from '../../../services/detection.service';
 import { SettingsService } from '../../../services/settings.service';
+import { PersonDetectionModelResponseService } from 'src/app/services/api/person-detection-model/person-detection-model-response.service';
 
 @Component({
   selector: 'app-settings',
@@ -11,16 +12,39 @@ import { SettingsService } from '../../../services/settings.service';
 export class SettingsPage implements OnInit {
   selectedMode: string = 'thermal';
   selectedViewAngle: 'front' | 'angled' | 'top' = 'front';
-  confidenceThreshold: number = 70;
+  confidenceThreshold: number = 50;
   autoSaveEnabled: boolean = true; // Default to true for search and rescue
+
+  modelSelected: any;
 
   constructor(
     private detectionService: DetectionService,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private personDetectionModelResponseService: PersonDetectionModelResponseService
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.loadSettings();
+
+    // Load Initial Model Settings
+    this.modelSelected = await this.personDetectionModelResponseService.getSelectedModel();
+    let model_id = this.modelSelected.id;
+    let angle: 'front' | 'angled' | 'top';
+    if (model_id == 1) {
+      angle = 'top';
+    } else if (model_id == 2) {
+      angle = 'front';
+    } else {
+      angle = 'angled';
+    }
+
+    this.confidenceThreshold = this.modelSelected.confidence;
+    this.settingsService.setConfidenceThreshold(this.confidenceThreshold);
+    this.selectViewAngle(angle);
+  }
+
+  loadInitialModel() {
+
   }
 
   selectMode(mode: string) {
@@ -29,10 +53,26 @@ export class SettingsPage implements OnInit {
     console.log('View mode changed to:', mode);
   }
 
-  selectViewAngle(angle: 'front' | 'angled' | 'top') {
+  async selectViewAngle(angle: 'front' | 'angled' | 'top') {
     this.selectedViewAngle = angle;
     this.settingsService.setViewAngle(angle);
     this.detectionService.updateModelEndpoint(angle);
+
+    let model_id = 1;
+    if (angle == 'top') {
+      model_id = 1;
+    } else if (angle == 'front') {
+      model_id = 2;
+    } else {
+      model_id = 3;
+    }
+
+    const personDetectionModel = {
+      id: model_id,
+      confidence: this.confidenceThreshold / 100
+    }
+
+    this.modelSelected = await this.personDetectionModelResponseService.updatePersonDetectionModel(personDetectionModel);
     console.log('View angle changed to:', angle);
   }
 
@@ -67,5 +107,6 @@ export class SettingsPage implements OnInit {
     this.confidenceThreshold = this.settingsService.getConfidenceThreshold();
     this.autoSaveEnabled = this.settingsService.getAutoSave();
   }
+
 }
 

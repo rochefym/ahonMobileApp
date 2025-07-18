@@ -12,12 +12,10 @@ export class MissionService {
 
   constructor(private http: HttpClient) { }
 
-
   getAllMissions(): Observable<any> {
     return this.http.get(this.baseUrl + '/missions/',
       { headers: this.httpHeaders });
   }
-
 
   getMissionById(id: string): Observable<any> {
     return this.http.get(this.baseUrl + '/mission/' + id + '/',

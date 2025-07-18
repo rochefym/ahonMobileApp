@@ -353,3 +353,17 @@
 //     --color: #1a1a1a;
 //   }
 // }
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 65vh;
+  /* Full viewport height */
+  width: 100%;
+}
+
+.initial-state {
+  text-align: center;
+  /* Center the content within the div */
+}
